@@ -1,4 +1,5 @@
 # Stage 1: Build the Angular application
+# Author Sanu
 FROM node:14 as build-stage
 WORKDIR /app
 COPY package*.json ./
