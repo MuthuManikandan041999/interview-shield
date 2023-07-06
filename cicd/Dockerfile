@@ -4,7 +4,7 @@ FROM node:14 as build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
+COPY .. .
 RUN npm run build --prod
 
 # Stage 2: Serve the Angular application using Nginx
