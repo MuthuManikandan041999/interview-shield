@@ -1,0 +1,41 @@
+steps:
+  #step 1
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: [
+      '-c',
+      'docker pull  gcr.io/gcds-oht33377u2-2023/github.com/sanusasidharan/interview-shield:$COMMIT_SHA'
+    ]
+  #step 2
+  - name: gcr.io/cloud-builders/docker
+    args: [
+      'build',
+      '-t',
+      'gcr.io/gcds-oht33377u2-2023/interview-shield:$BRANCH_NAME-$COMMIT_SHAa',
+      '-t',
+      'gcr.io/gcds-oht33377u2-2023/interview-shield:latest',
+      '.'
+    ]
+  #step 3
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: ['apply', '-f', 'k8/']
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-east1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=auto-cluster'
+  #step 4
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: [
+      'set',
+      'image',
+      'deployment',
+      'videotracker',
+      'video-tracker-system-1=gcr.io/gcds-oht33377u2-2023/interview-shield:$BRANCH_NAME-$COMMIT_SHA'
+    ]
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-east1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=auto-cluster'
+# push images to Google Container Registry with tags
+images: [
+  'gcr.io/gcds-oht33377u2-2023/interview-shield:$BRANCH_NAME-$COMMIT_SHA',
+  'gcr.io/gcds-oht33377u2-2023/interview-shield:latest'
+]
